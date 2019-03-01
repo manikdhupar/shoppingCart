@@ -1,0 +1,16 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+        <main>
+            <% if(orders.length>0){ %>
+                <% orders.forEach(order=>{ %>
+                    <% order.getProducts().then(product=> console.log(product))%>
+                    <h1>We have products</h1>
+                <% }) %>
+            <%}else{ %>
+            <h1>Nothing there!</h1>
+            <% } %>
+        </main>
+        <%- include('../includes/end.ejs') %>
