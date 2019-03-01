@@ -63,6 +63,17 @@ class Product {
         })
     );
   }
+
+  static deleteById(prodId){
+    const db=getDb();
+    return db.collection('products').deleteOne({_id:new ObjectId(prodId)})
+    .then(()=>{
+      console.log('deleted');
+    }).catch(err=>{
+      console.log(err);
+    });
+  }
+
 }
 
 module.exports = Product;
