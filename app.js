@@ -8,6 +8,8 @@ const errorController = require('./controllers/error');
 //MONGO CLIENT
 const mongoClient = require('./util/database').mongoConnect;
 
+//USER MODEL
+const User=require('./models/user');
 // const sequelize = require('./util/database');
 
 //importing modals
@@ -30,15 +32,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  // User.findByPk(1)
-  //   .then(user => {
-  //     req.user = user;
-  //     next();
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
-  next();
+  User.findById("5c7990b2498a2be8ae46f282")
+    .then(user => {
+      req.user = user;
+      next();
+    })
+    .catch(err => {
+      console.log(err);
+    });
 });
 
 app.use('/admin', adminRoutes);
