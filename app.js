@@ -5,11 +5,10 @@ const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
 
-//MONGO CLIENT
-const mongoClient = require('./util/database').mongoConnect;
+const mongoose = require('mongoose');
 
 //USER MODEL
-const User=require('./models/user');
+// const User = require('./models/user');
 // const sequelize = require('./util/database');
 
 //importing modals
@@ -31,45 +30,28 @@ const shopRoutes = require('./routes/shop');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use((req, res, next) => {
-  User.findById("5c7990b2498a2be8ae46f282")
-    .then(user => {
-      req.user = user;
-      next();
-    })
-    .catch(err => {
-      console.log(err);
-    });
-});
+// app.use((req, res, next) => {
+//   User.findById('5c7990b2498a2be8ae46f282')
+//     .then(user => {
+//       req.user = user;
+//       next();
+//     })
+//     .catch(err => {
+//       console.log(err);
+//     });
+// });
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoClient(() => {
-  app.listen(3000);
-});
-
-// sequelize
-//   .sync()
-//   .then(result => {
-//     return User.findByPk(1);
-//   })
-//   .then(user => {
-//     if (!user) {
-//       return User.create({ name: 'Manik', email: 'manik.dhupar7@gmail.com' });
-//     }
-//     return user;
-//   })
-//   .then(user => {
-//     return user.createCart();
-//   })
-//   .then(() => {
-//     app.listen(3000, () => {
-//       console.log('SERVER STARTED AT PORT : 3000');
-//     });
-//   })
-//   .catch(err => {
-//     console.log(err);
-//   });
+mongoose
+  .connect('mongodb://localhost:27017/shop')
+  .then(result => {
+    console.log('database connected');
+    app.listen(3000);
+  })
+  .catch(err => {
+    console.log(err);
+  });
