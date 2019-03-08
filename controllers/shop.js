@@ -31,7 +31,6 @@ exports.getIndex = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const productId = req.params.id;
-  //FIND BY ID RETURNS ONLY 1 ENTRY AND NOT ARRAY OF MATCHED
   Product.findById(productId)
     .then(product => {
       res.render('./shop/product-detail', {
