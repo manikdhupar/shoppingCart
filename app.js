@@ -31,7 +31,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  User.findById('5c840bf5e685a92aa30c7f18')
+  User.findById('5c83be3f4e93980bef5eb4c9')
     .then(user => {
       req.user = user;
       next();
@@ -47,10 +47,10 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 mongoose
-  // .connect('mongodb://localhost:27017/shop')
-  .connect(
-    'mongodb+srv://manik_dhupar:fumYPyxmnlGLKrMR@cluster0-avpiv.mongodb.net/shop?retryWrites=true'
-  )
+  .connect('mongodb://localhost:27017/shop')
+  // .connect(
+  //   'mongodb+srv://manik_dhupar:fumYPyxmnlGLKrMR@cluster0-avpiv.mongodb.net/shop?retryWrites=true'
+  // )
   .then(result => {
     console.log('database connected');
     return User.findOne();
