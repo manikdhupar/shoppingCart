@@ -1,7 +1,17 @@
-//api_key
-//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
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+const transporter = nodemailer.createTransport(
+  sendgridTransport({
+    auth: {
+      api_key:
+        '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'
+    }
+  })
+);
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash('error');
@@ -93,7 +103,14 @@ exports.postSignup = (req, res, next) => {
           return user.save();
         })
         .then(user => {
-          return res.redirect('/');
+          res.redirect('/');
+          return transporter.sendMail({
+            to: email,
+            from: 'manik.dhupar7@gmail.com',
+            subject: 'Signup Succeed',
+            html:
+              '<h1>Congrats ,  You successfully signed up. Enjoy the services !!</h1>'
+          });
         })
         .catch(err => {
           console.log(err);
