@@ -120,3 +120,13 @@ exports.postSignup = (req, res, next) => {
       console.log(err);
     });
 };
+
+exports.getReset = (req, res, next) => {
+  let message = req.flash('error');
+  message.length > 0 ? (message = message[0]) : (message = null);
+  res.render('auth/reset', {
+    path: '/reset',
+    pageTitle: 'Reset Password',
+    errorMessage: message
+  });
+};
