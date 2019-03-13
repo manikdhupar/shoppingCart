@@ -7,8 +7,7 @@ exports.getProducts = (req, res, next) => {
       res.render('shop/product-list', {
         prods: products,
         pageTitle: 'Products',
-        path: '/products',
-        isAuthenticated: req.isLoggedIn
+        path: '/products'
       });
     })
     .catch(err => {
@@ -22,8 +21,7 @@ exports.getIndex = (req, res, next) => {
       res.render('shop/index', {
         prods: products,
         pageTitle: 'Shop',
-        path: '/',
-        isAuthenticated: req.isLoggedIn
+        path: '/'
       });
     })
     .catch(err => {
@@ -38,8 +36,7 @@ exports.getProduct = (req, res, next) => {
       res.render('./shop/product-detail', {
         product: product,
         pageTitle: product.title,
-        path: '/products',
-        isAuthenticated: req.isLoggedIn
+        path: '/products'
       });
     })
     .catch(err => {
@@ -48,6 +45,7 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
+  console.log(req.user);
   req.user
     .populate('cart.items.productId')
     .execPopulate()
@@ -56,8 +54,7 @@ exports.getCart = (req, res, next) => {
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
-        products: products,
-        isAuthenticated: req.isLoggedIn
+        products: products
       });
     })
     .catch(err => {
@@ -93,13 +90,11 @@ exports.postCartDelete = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  Order.find({ 'user.userId': req.user._id }).then(orders => {
-    console.log(orders);
+  Order.find({ 'user.userId': req.session.user._id }).then(orders => {
     res.render('shop/orders', {
       path: '/orders',
       pageTitle: 'Your Orders',
-      orders: orders,
-      isAuthenticated: req.isLoggedIn
+      orders: orders
     });
   });
 };
@@ -122,8 +117,8 @@ exports.postOrder = (req, res, next) => {
 
       const order = new Order({
         user: {
-          name: req.user.name,
-          userId: req.user._id
+          email: req.session.user.email,
+          userId: req.session.user._id
         },
         products: products
       });
