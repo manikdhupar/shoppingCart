@@ -15,6 +15,8 @@ const csrfProtection = csrf();
 
 const flash = require('connect-flash');
 
+require('dotenv').config();
+
 //USER MODEL
 const User = require('./models/user');
 // const sequelize = require('./util/database');
