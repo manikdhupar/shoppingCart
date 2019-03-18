@@ -22,7 +22,12 @@ exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    errorMessage: message
+    errorMessage: message,
+    oldInput: {
+      email: '',
+      password: ''
+    },
+    validationErrors: []
   });
 };
 
@@ -36,32 +41,51 @@ exports.postLogin = (req, res, next) => {
     return res.status(422).render('auth/login', {
       path: '/signup',
       pageTitle: 'Signup',
-      errorMessage: errors.array()[0].msg
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email: email,
+        password: password
+      },
+      validationErrors: errors.array()
     });
   }
 
-  return bcrypt
-    .compare(password, user.password)
-    .then(doMatch => {
-      if (!doMatch) {
-        req.flash('error', 'Invalid Username Or Password');
-        res.redirect('/login');
-      } else {
-        req.session.isLoggedIn = true;
-        req.session.user = user;
-        req.session.save(err => {
+  User.findOne({ email: email })
+    .then(user => {
+      bcrypt
+        .compare(password, user.password)
+        .then(doMatch => {
+          if (!doMatch) {
+            return res.status(422).render('auth/login', {
+              path: '/signup',
+              pageTitle: 'Signup',
+              errorMessage: 'Invalid username or password',
+              oldInput: {
+                email: email,
+                password: password
+              },
+              validationErrors: errors.array()
+            });
+          } else {
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            req.session.save(err => {
+              if (err) {
+                console.log(err);
+              } else {
+                res.redirect('/');
+              }
+            });
+          }
+        })
+        .catch(err => {
           if (err) {
             console.log(err);
-          } else {
-            res.redirect('/');
           }
         });
-      }
     })
     .catch(err => {
-      if (err) {
-        console.log(err);
-      }
+      console.log(err);
     });
 };
 
@@ -81,7 +105,13 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    errorMessage: message
+    errorMessage: message,
+    oldInput: {
+      email: '',
+      password: '',
+      confirmPassword: ''
+    },
+    validationErrors: []
   });
 };
 
@@ -91,11 +121,16 @@ exports.postSignup = (req, res, next) => {
   //validation errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    // console.log(errors.array());
     return res.status(422).render('auth/signup', {
       path: '/signup',
       pageTitle: 'Signup',
-      errorMessage: errors.array()[0].msg
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email: email,
+        password: password,
+        confirmPassword: req.body.confirmPassword
+      },
+      validationErrors: errors.array()
     });
   }
   return bcrypt

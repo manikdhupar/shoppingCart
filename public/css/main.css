@@ -248,6 +248,10 @@ form {
   color: red;
 }
 
+.invalid {
+  border-color: red !important;
+}
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;
