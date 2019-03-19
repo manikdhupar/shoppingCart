@@ -6,6 +6,8 @@ const adminController = require('../controllers/admin');
 
 const isAuth = require('../middleware/isAuth');
 
+const { body } = require('express-validator/check');
+
 const router = express.Router();
 
 // /admin/products => GET
@@ -15,11 +17,51 @@ router.get('/products', isAuth, adminController.getProducts);
 router.get('/add-product', isAuth, adminController.getAddProduct);
 
 // /admin/add-product => POST
-router.post('/add-product', isAuth, adminController.postAddProduct);
+router.post(
+  '/add-product',
+  [
+    isAuth,
+    body('title')
+      .toString()
+      .withMessage('Title is not a valid string')
+      .isLength({ min: 3 })
+      .withMessage('Title must be a at least 3 characters long!')
+      .trim(),
+    body('imageUrl')
+      .trim()
+      .isURL()
+      .withMessage('Image URL is invalid'),
+    body('description', 'Enter a valid description')
+      .isLength({ min: 5 })
+      .trim(),
+    body('price', 'Enter a valid Price').isFloat()
+  ],
+  adminController.postAddProduct
+);
 
 router.get('/edit-product/:productId', isAuth, adminController.getEditProduct);
 
-router.post('/edit-product', isAuth, adminController.postEditProduct);
+router.post(
+  '/edit-product',
+  [
+    isAuth,
+    body('title')
+      .toString()
+      .withMessage('Title is not a valid string')
+      .isLength({ min: 3 })
+      .withMessage('Title must be a at least 3 characters long!')
+      .trim(),
+    body('imageUrl')
+      .trim()
+      .isURL()
+      .withMessage('Image URL is invalid'),
+    body('description', 'Enter a valid description')
+      .isLength({ min: 5 })
+      .trim(),
+    body('price', 'Enter a valid Price').isFloat()
+  ],
+  adminController.postEditProduct
+);
 
 router.post('/delete-product', isAuth, adminController.deleteProduct);
 

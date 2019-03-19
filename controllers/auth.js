@@ -64,7 +64,7 @@ exports.postLogin = (req, res, next) => {
                 email: email,
                 password: password
               },
-              validationErrors: errors.array()
+              validationErrors: []
             });
           } else {
             req.session.isLoggedIn = true;
