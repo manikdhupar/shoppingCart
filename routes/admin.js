@@ -27,10 +27,7 @@ router.post(
       .isLength({ min: 3 })
       .withMessage('Title must be a at least 3 characters long!')
       .trim(),
-    body('imageUrl')
-      .trim()
-      .isURL()
-      .withMessage('Image URL is invalid'),
+    body('imageUrl').trim(),
     body('description', 'Enter a valid description')
       .isLength({ min: 5 })
       .trim(),
@@ -51,10 +48,7 @@ router.post(
       .isLength({ min: 3 })
       .withMessage('Title must be a at least 3 characters long!')
       .trim(),
-    body('imageUrl')
-      .trim()
-      .isURL()
-      .withMessage('Image URL is invalid'),
+    body('imageUrl').trim(),
     body('description', 'Enter a valid description')
       .isLength({ min: 5 })
       .trim(),

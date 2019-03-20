@@ -1,7 +1,10 @@
 const path = require('path');
 
 const express = require('express');
+
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const uniqid = require('uniqid');
 
 const errorController = require('./controllers/error');
 
@@ -36,6 +39,29 @@ const store = new MongoDBStore({
   collection: 'sessions'
 });
 
+//multer filestrorage
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, uniqid() + '-' + file.originalname);
+  }
+});
+
+//multer filter
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
@@ -44,6 +70,10 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+);
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
@@ -96,12 +126,12 @@ app.use(errorController.get404);
 // });
 
 app.use((error, req, res, next) => {
+  console.log(error);
   res.status(500).render('500', {
     pageTitle: 'Error Occured',
     path: '/500'
   });
 });
-
 mongoose
   .connect('mongodb://localhost:27017/shop')
   // .connect(

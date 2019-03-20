@@ -29,14 +29,13 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const image = req.file;
   const price = req.body.price;
   const description = req.body.description;
-
-  const errors = validationResult(req);
-  console.log('errors are : ', errors.isEmpty());
-  if (!errors.isEmpty()) {
-    console.log('here');
+  console.log(image);
+  console.log('1');
+  if (!image) {
+    console.log('stuck here');
     return res.status(422).render('admin/edit-product', {
       pageTitle: 'Add Product',
       path: '/admin/add-product',
@@ -44,7 +43,24 @@ exports.postAddProduct = (req, res, next) => {
       hasError: true,
       product: {
         title: title,
-        imageUrl: imageUrl,
+        price: price,
+        description: description
+      },
+      validationErrors: [],
+      errorMessage: 'Plese upload a valid image'
+    });
+  }
+
+  console.log('2');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin/add-product',
+      editing: false,
+      hasError: true,
+      product: {
+        title: title,
         price: price,
         description: description
       },
@@ -57,7 +73,7 @@ exports.postAddProduct = (req, res, next) => {
     title: title,
     price: price,
     description: description,
-    imageUrl: imageUrl,
+    imageUrl: image.path,
     userId: req.session.user._id
   });
   product
@@ -104,12 +120,10 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const productId = req.body.hiddenProductId;
   const updatedTitle = req.body.title;
-  const updatedImageUrl = req.body.imageUrl;
   const updatedDescription = req.body.description;
   const updatedPrice = req.body.price;
 
   const errors = validationResult(req);
-  console.log(errors.array());
   if (!errors.isEmpty()) {
     return res.status(422).render('admin/edit-product', {
       pageTitle: 'Edit Product',
@@ -119,7 +133,6 @@ exports.postEditProduct = (req, res, next) => {
       product: {
         _id: productId,
         title: updatedTitle,
-        imageUrl: updatedImageUrl,
         price: updatedPrice,
         description: updatedDescription
       },
@@ -134,7 +147,9 @@ exports.postEditProduct = (req, res, next) => {
         return res.redirect('/');
       }
       product.title = updatedTitle;
-      product.imageUrl = updatedImageUrl;
+      if (image) {
+        product.imageUrl = image.path;
+      }
       product.price = updatedPrice;
       product.description = updatedDescription;
       return product.save().then(product => {
