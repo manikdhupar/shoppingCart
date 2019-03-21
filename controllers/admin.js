@@ -1,5 +1,7 @@
 const Product = require('../models/product');
 
+const fileHelper = require('../util/file');
+
 const { validationResult } = require('express-validator/check');
 
 exports.getProducts = (req, res, next) => {
@@ -33,9 +35,7 @@ exports.postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
   console.log(image);
-  console.log('1');
   if (!image) {
-    console.log('stuck here');
     return res.status(422).render('admin/edit-product', {
       pageTitle: 'Add Product',
       path: '/admin/add-product',
@@ -51,7 +51,6 @@ exports.postAddProduct = (req, res, next) => {
     });
   }
 
-  console.log('2');
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render('admin/edit-product', {
@@ -120,6 +119,7 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const productId = req.body.hiddenProductId;
   const updatedTitle = req.body.title;
+  const image = req.file;
   const updatedDescription = req.body.description;
   const updatedPrice = req.body.price;
 
@@ -148,6 +148,7 @@ exports.postEditProduct = (req, res, next) => {
       }
       product.title = updatedTitle;
       if (image) {
+        productFile.deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
       product.price = updatedPrice;
@@ -165,7 +166,17 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.deleteProduct = (req, res, next) => {
   const productId = req.body.deleteProductId;
-  Product.deleteOne({ _id: productId, userId: req.user._id })
+  Product.findById(productId)
+    .then(product => {
+      if (!product) {
+        return next(new Error('No Product Found!'));
+      }
+      if (product.userId.toString() !== req.user._id.toString()) {
+        return next(new Error('Unauthorised'));
+      }
+      fileHelper.deleteFile(product.imageUrl);
+      return Product.deleteOne({ _id: productId, userId: req.user._id });
+    })
     .then(() => {
       res.redirect('/admin/products');
     })
