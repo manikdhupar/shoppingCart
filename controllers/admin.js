@@ -165,20 +165,26 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.deleteProduct = (req, res, next) => {
-  const productId = req.body.deleteProductId;
+  const productId = req.params.productId;
+  console.log('pId');
   Product.findById(productId)
     .then(product => {
+      console.log('1');
       if (!product) {
+        console.log('2');
         return next(new Error('No Product Found!'));
       }
       if (product.userId.toString() !== req.user._id.toString()) {
+        console.log('3');
         return next(new Error('Unauthorised'));
       }
+      console.log('4');
       fileHelper.deleteFile(product.imageUrl);
       return Product.deleteOne({ _id: productId, userId: req.user._id });
     })
     .then(() => {
-      res.redirect('/admin/products');
+      console.log('DESTROYED PRODUCT');
+      res.status(200).json({ message: 'Success!' });
     })
     .catch(err => {
       const error = new Error(err);
