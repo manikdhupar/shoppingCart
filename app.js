@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 const express = require('express');
 
@@ -15,6 +16,10 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 
 const csrf = require('csurf');
 const csrfProtection = csrf();
+
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
 
 const flash = require('connect-flash');
 
@@ -62,12 +67,24 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, 'access.log'),
+  {
+    flags: 'a'
+  }
+);
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
+
+app.use(compression());
+app.use(helmet());
+
+app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -133,14 +150,16 @@ app.use((error, req, res, next) => {
   });
 });
 mongoose
-  .connect('mongodb://localhost:27017/shop')
+  .connect(process.env.MONGO_URL, { useNewUrlParser: true })
   // .connect(
   //   'mongodb+srv://manik_dhupar:fumYPyxmnlGLKrMR@cluster0-avpiv.mongodb.net/shop?retryWrites=true'
   // )
   .then(result => {
     console.log('database connected');
-    console.log('server started at PORT:3000');
-    app.listen(3000);
+    return app.listen(process.env.PORT || 3000);
+  })
+  .then(() => {
+    console.log('Server started');
   })
   .catch(err => {
     console.log(err);

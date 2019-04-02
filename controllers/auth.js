@@ -148,7 +148,7 @@ exports.postSignup = (req, res, next) => {
       return user.save();
     })
     .then(user => {
-      res.redirect('/');
+      res.redirect('/login');
       return transporter.sendMail({
         to: email,
         from: 'manik.dhupar7@gmail.com',
@@ -167,10 +167,15 @@ exports.postSignup = (req, res, next) => {
 exports.getReset = (req, res, next) => {
   let message = req.flash('error');
   message.length > 0 ? (message = message[0]) : (message = null);
+  let successMessage = req.flash('success');
+  successMessage.length > 0
+    ? (successMessage = successMessage[0])
+    : (successMessage = null);
   res.render('auth/reset', {
     path: '/reset',
     pageTitle: 'Reset Password',
-    errorMessage: message
+    errorMessage: message,
+    successMessage: successMessage
   });
 };
 
@@ -190,7 +195,8 @@ exports.postReset = (req, res, next) => {
         user.resetToken = token;
         user.resetTokenExpiration = Date.now() + 3600000;
         return user.save().then(result => {
-          res.redirect('/');
+          req.flash('success', 'Check Your mail for password reset link');
+          res.redirect('/reset');
           transporter.sendMail({
             to: req.body.email,
             from: 'manik.dhupar7@gmail.com',

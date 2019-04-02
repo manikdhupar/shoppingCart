@@ -248,6 +248,12 @@ form {
   color: red;
 }
 
+.user-message--success {
+  border-color: rgb(20, 112, 218);
+  background: rgb(176, 219, 255);
+  color: blue;
+}
+
 .invalid {
   border-color: red !important;
 }
