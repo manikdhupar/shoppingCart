@@ -143,7 +143,6 @@ app.use(errorController.get404);
 // });
 
 app.use((error, req, res, next) => {
-  console.log(error);
   res.status(500).render('500', {
     pageTitle: 'Error Occured',
     path: '/500'
@@ -156,19 +155,11 @@ mongoose
   //   }@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`
   // )
   .connect(
-    'mongodb+srv://' +
-      process.env.MONGO_USER +
-      ':' +
-      process.env.MONGO_PASSWORD +
-      '@cluster0-avpiv.mongodb.net/shop'
+    'mongodb+srv://manik_dhupar:Azc2362XM9pJXHa2@cluster0-avpiv.mongodb.net/shop'
   )
   .then(result => {
-    console.log('database connected');
     return app.listen(process.env.PORT || 3000);
   })
-  .then(() => {
-    console.log('Server started');
-  })
   .catch(err => {
-    console.log(err);
+    throw err;
   });
