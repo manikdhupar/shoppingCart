@@ -9,6 +9,9 @@
     "start-server": "node app.js",
     "lint:ejs": "ejslint views/shop/cart.ejs"
   },
+  "engines": {
+    "node": "11.0.0"
+  },
   "author": "Maximilian Schwarzmüller",
   "license": "ISC",
   "devDependencies": {
