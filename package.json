@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "start-server": "node app.js",
-    "lint:ejs": "ejslint views/shop/cart.ejs"
+    "start-server": "node app.js"
   },
   "engines": {
     "node": "11.0.0"

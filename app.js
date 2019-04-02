@@ -150,10 +150,11 @@ app.use((error, req, res, next) => {
   });
 });
 mongoose
-  .connect(process.env.MONGO_URL, { useNewUrlParser: true })
-  // .connect(
-  //   'mongodb+srv://manik_dhupar:fumYPyxmnlGLKrMR@cluster0-avpiv.mongodb.net/shop?retryWrites=true'
-  // )
+  .connect(
+    `mongodb+srv://${process.env.MONGO_USER}:${
+      process.env.MONGO_PASSWORD
+    }@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`
+  )
   .then(result => {
     console.log('database connected');
     return app.listen(process.env.PORT || 3000);
