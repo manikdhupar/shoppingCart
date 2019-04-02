@@ -150,10 +150,17 @@ app.use((error, req, res, next) => {
   });
 });
 mongoose
+  // .connect(
+  //   `mongodb+srv://${process.env.MONGO_USER}:${
+  //     process.env.MONGO_PASSWORD
+  //   }@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`
+  // )
   .connect(
-    `mongodb+srv://${process.env.MONGO_USER}:${
-      process.env.MONGO_PASSWORD
-    }@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`
+    'mongodb+srv://' +
+      process.env.MONGO_USER +
+      ':' +
+      process.env.MONGO_PASSWORD +
+      '@cluster0-avpiv.mongodb.net/shop'
   )
   .then(result => {
     console.log('database connected');
