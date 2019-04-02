@@ -37,6 +37,10 @@ const User = require('./models/user');
 // const Order = require('./models/order');
 // const OrderItem = require('./models/order-item');
 
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${
+  process.env.MONGO_PASSWORD
+}@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
+
 const app = express();
 
 const store = new MongoDBStore({
@@ -134,19 +138,12 @@ app.use(authRoutes);
 
 app.use(errorController.get404);
 
-// app.use((error, req, res, next) => {
-//   // res.status(500).render('500', {
-//   //   pageTitle: 'Error Occured',
-//   //   path: '/500'
-//   // });
-//   res.redirect('/500');
-// });
-
 app.use((error, req, res, next) => {
   res.status(500).render('500', {
     pageTitle: 'Error Occured',
     path: '/500'
   });
+  next();
 });
 mongoose
   // .connect(
@@ -154,9 +151,7 @@ mongoose
   //     process.env.MONGO_PASSWORD
   //   }@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`
   // )
-  .connect(
-    'mongodb+srv://manik_dhupar:Azc2362XM9pJXHa2@cluster0-avpiv.mongodb.net/shop'
-  )
+  .connect(MONGODB_URI)
   .then(result => {
     return app.listen(process.env.PORT || 3000);
   })
