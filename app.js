@@ -37,9 +37,9 @@ const User = require('./models/user');
 // const Order = require('./models/order');
 // const OrderItem = require('./models/order-item');
 
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${
-  process.env.MONGO_PASSWORD
-}@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
+// const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${
+//   process.env.MONGO_PASSWORD
+// }@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
 
 const app = express();
 
@@ -151,10 +151,13 @@ mongoose
   //     process.env.MONGO_PASSWORD
   //   }@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`
   // )
-  .connect(MONGODB_URI)
+  .connect(
+    'mongodb+srv://manik_dhupar:Azc2362XM9pJXHa2@cluster0-avpiv.mongodb.net/shop'
+  )
   .then(result => {
+    console.log('db connected');
     return app.listen(process.env.PORT || 3000);
   })
   .catch(err => {
-    throw err;
+    console.log(err);
   });
