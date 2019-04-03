@@ -151,9 +151,14 @@ mongoose
   //     process.env.MONGO_PASSWORD
   //   }@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`
   // )
-  .connect(
-    'mongodb+srv://manik_dhupar:Azc2362XM9pJXHa2@cluster0-avpiv.mongodb.net/shop'
-  )
+  // .connect(
+  //   'mongodb://manik_dhupar:Azc2362XM9pJXHa2@cluster0-avpiv.mongodb.net/shop'
+  // )
+  // .connect(
+  //   'mongodb+srv://manik_dhupar:Azc2362XM9pJXHa2@cluster0-avpiv.mongodb.net/shop?retryWrites=true'
+  // )
+  // .connect('mongodb://localhost:27017')
+  .connect('mongodb://manik07:jXTiRCD9Tbi8X8B@ds117623.mlab.com:17623/shoppp')
   .then(result => {
     console.log('db connected');
     return app.listen(process.env.PORT || 3000);
